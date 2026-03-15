@@ -17,6 +17,8 @@ const plan=sessionStorage.getItem("plan")||"";
 const planData=JSON.parse(sessionStorage.getItem("planData")||"{}");
 
 const foodTruckAddress="Riversoljax Food Truck, 8350 Baymeadows Rd, Jacksonville, FL 32256";
+const foodTruckCoords={lat:30.2203,lng:-81.5856}; // Riversoljax location
+const maxDeliveryMiles=10;
 const googleMapsLink=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(foodTruckAddress)}`;
 const appleMapsLink=`https://maps.apple.com/?q=${encodeURIComponent(foodTruckAddress)}`;
 
@@ -110,6 +112,17 @@ window.onload=()=>pickupDeliveryModal.style.display="flex";
 pickupBtn.addEventListener("click",()=>showAddress("Pickup"));
 deliveryBtn.addEventListener("click",()=>showAddress("Delivery"));
 
+function getDistanceMiles(lat1,lon1,lat2,lon2){
+const R=3958.8;
+const dLat=(lat2-lat1)*Math.PI/180;
+const dLon=(lon2-lon1)*Math.PI/180;
+const a=Math.sin(dLat/2)*Math.sin(dLat/2)+
+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*
+Math.sin(dLon/2)*Math.sin(dLon/2);
+const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+return R*c;
+}
+
 function renderReceipt(){
 let subtotal=0;
 receiptEl.innerHTML=`<p><b>Order Type:</b> ${checkoutForm.dataset.type}</p>
@@ -140,6 +153,51 @@ if(x.length>=7) formatted+="-"+x.substring(6,10);
 e.target.value=formatted;
 });
 }
+
+const payNowBtn=document.getElementById("payNowBtn");
+
+const rangeMsg=document.createElement("div");
+rangeMsg.style.color="red";
+rangeMsg.style.marginTop="6px";
+rangeMsg.style.fontSize=".9rem";
+rangeMsg.style.display="none";
+document.getElementById("addressContainer").appendChild(rangeMsg);
+
+cAddress.addEventListener("blur",async()=>{
+if(checkoutForm.dataset.type!=="Delivery") return;
+
+const address=cAddress.value.trim();
+if(!address) return;
+
+try{
+const res=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`);
+const data=await res.json();
+
+if(!data.length){
+rangeMsg.innerText="Address not found.";
+rangeMsg.style.display="block";
+payNowBtn.disabled=true;
+return;
+}
+
+const lat=parseFloat(data[0].lat);
+const lon=parseFloat(data[0].lon);
+
+const distance=getDistanceMiles(foodTruckCoords.lat,foodTruckCoords.lng,lat,lon);
+
+if(distance>maxDeliveryMiles){
+rangeMsg.innerText="This address does not qualify for the 10 mile delivery range.";
+rangeMsg.style.display="block";
+payNowBtn.disabled=true;
+}else{
+rangeMsg.style.display="none";
+payNowBtn.disabled=false;
+}
+
+}catch(err){
+console.error(err);
+}
+});
 
 checkoutForm.addEventListener("submit",(e)=>{
 e.preventDefault();
