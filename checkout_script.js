@@ -50,54 +50,57 @@ function showAddress(type){
     }
 
     if(isAppleDevice()){
-        // Create professional modal for map choice
-        const addressLinkEl = document.getElementById("addressLink");
-        addressLinkEl.addEventListener("click", (e)=>{
-            e.preventDefault();
+    const addressLinkEl = document.getElementById("addressLink");
+    addressLinkEl.addEventListener("click",(e)=>{
+        e.preventDefault();
 
-            // Remove existing modal if present
-            const oldModal = document.getElementById("mapChoiceModal");
-            if(oldModal) oldModal.remove();
+        const oldModal=document.getElementById("mapChoiceModal");
+        if(oldModal) oldModal.remove();
 
-            // Modal HTML
-            const modalHTML = document.createElement("div");
-            modalHTML.id = "mapChoiceModal";
-            modalHTML.style.position = "fixed";
-            modalHTML.style.top = "0";
-            modalHTML.style.left = "0";
-            modalHTML.style.width = "100%";
-            modalHTML.style.height = "100%";
-            modalHTML.style.background = "rgba(0,0,0,0.5)";
-            modalHTML.style.display = "flex";
-            modalHTML.style.justifyContent = "center";
-            modalHTML.style.alignItems = "center";
-            modalHTML.style.zIndex = "9999";
+        const modalHTML=document.createElement("div");
+        modalHTML.id="mapChoiceModal";
+        modalHTML.style.position="fixed";
+        modalHTML.style.top="0";
+        modalHTML.style.left="0";
+        modalHTML.style.width="100%";
+        modalHTML.style.height="100%";
+        modalHTML.style.background="rgba(0,0,0,0.5)";
+        modalHTML.style.display="flex";
+        modalHTML.style.justifyContent="center";
+        modalHTML.style.alignItems="center";
+        modalHTML.style.zIndex="9999";
 
-            modalHTML.innerHTML = `
-                <div style="background:white;padding:1.8rem 2rem;border-radius:16px;text-align:center;max-width:300px;width:90%;box-shadow:0 10px 30px rgba(0,0,0,0.2);">
-                    <p style="font-weight:600;margin-bottom:1rem;font-size:1rem;">Open in:</p>
-                    <button id="openAppleMaps" style="padding:0.8rem 1.2rem;margin:0.5rem;width:100%;border:none;border-radius:12px;background:#90EE90;font-weight:600;font-size:1rem;cursor:pointer;">Apple Maps</button>
-                    <button id="openGoogleMaps" style="padding:0.8rem 1.2rem;margin:0.5rem;width:100%;border:none;border-radius:12px;background:#1c7ed6;color:white;font-weight:600;font-size:1rem;cursor:pointer;">Google Maps</button>
-                    <button id="closeMapModal" style="padding:0.5rem 1rem;margin-top:1rem;width:50%;border:none;border-radius:12px;background:#ccc;font-weight:600;font-size:0.9rem;cursor:pointer;">Cancel</button>
-                </div>
-            `;
+        modalHTML.innerHTML=`
+        <div style="background:white;padding:1.8rem 2rem;border-radius:16px;text-align:center;max-width:300px;width:90%;box-shadow:0 10px 30px rgba(0,0,0,0.2);position:relative;">
+            
+            <span id="closeMapModal" style="position:absolute;top:10px;right:14px;font-size:20px;font-weight:700;cursor:pointer;">×</span>
 
-            document.body.appendChild(modalHTML);
+            <p style="font-weight:600;margin-bottom:1rem;font-size:1rem;">Open in:</p>
 
-            // Button events
-            document.getElementById("openAppleMaps").addEventListener("click", ()=>{
-                window.open(appleMapsLink, "_blank");
-                modalHTML.remove();
-            });
-            document.getElementById("openGoogleMaps").addEventListener("click", ()=>{
-                window.open(googleMapsLink, "_blank");
-                modalHTML.remove();
-            });
-            document.getElementById("closeMapModal").addEventListener("click", ()=>{
-                modalHTML.remove();
-            });
+            <button id="openAppleMaps" style="padding:0.8rem 1.2rem;margin:0.5rem;width:100%;border:none;border-radius:12px;background:#e5e5e5;color:black;font-weight:600;font-size:1rem;cursor:pointer;">Apple Maps</button>
+
+            <button id="openGoogleMaps" style="padding:0.8rem 1.2rem;margin:0.5rem;width:100%;border:none;border-radius:12px;background:#e5e5e5;color:black;font-weight:600;font-size:1rem;cursor:pointer;">Google Maps</button>
+
+        </div>
+        `;
+
+        document.body.appendChild(modalHTML);
+
+        document.getElementById("openAppleMaps").addEventListener("click",()=>{
+            window.open(appleMapsLink,"_blank");
+            modalHTML.remove();
         });
-    }
+
+        document.getElementById("openGoogleMaps").addEventListener("click",()=>{
+            window.open(googleMapsLink,"_blank");
+            modalHTML.remove();
+        });
+
+        document.getElementById("closeMapModal").addEventListener("click",()=>{
+            modalHTML.remove();
+        });
+    });
+}
 
     checkoutForm.dataset.type=type;
     renderReceipt();
