@@ -10,6 +10,7 @@ const receiptEl=document.getElementById("receipt");
 const cName=document.getElementById("cName");
 const cEmail=document.getElementById("cEmail");
 const cPhone=document.getElementById("cPhone");
+const cAddress=document.getElementById("cAddress");
 
 const orders=JSON.parse(sessionStorage.getItem("orders")||"[]");
 const mealCount=parseInt(sessionStorage.getItem("mealCount")||"0");
